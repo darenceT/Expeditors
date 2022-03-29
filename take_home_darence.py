@@ -34,6 +34,15 @@ class Person:
     @property
     def age(self):
         return self.__age
+    
+    def __eq__(self):
+        pass
+    
+    def __lt__(self):
+        pass
+    
+    def __gt__(self):
+        pass
 
 class WorkShop:
 
@@ -47,15 +56,15 @@ class WorkShop:
     def add_single_entry(self, data):
         
         new_entry = self.__parser(data)
-        self.__storage.append(new_entry)
+        self.__storage.append(Person(*new_entry))
 
     def add_multiple_entries(self, data):
         data_list = data.splitlines()
 
         for line in data_list:
             new_entry = self.__parser(line)
-            self.__storage.append(new_entry)
-
+            self.__storage.append(Person(*new_entry))            
+            
     def __parser(self, data):
         """
         Verifies each part of an entry for correct formating and errors
