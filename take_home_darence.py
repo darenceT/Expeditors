@@ -30,10 +30,17 @@ class Person:
     @property
     def state(self):
         return self.__state
-
+    
+    @property
+    def address(self):
+        return ', '.join([self.__street, self.__city, self.__state])
+        
     @property
     def age(self):
         return self.__age
+    
+    def is_family(self, person):
+        return self.address == person.address
     
     def __eq__(self):
         pass
