@@ -2,11 +2,18 @@
 
 class Person:
     """
-
+    Object of each person with his/her info, created and housed in WorkShop
     """
-    def __init__(self, first, last, street, city, state, age):
+    def __init__(self, first: str, last: str, street: str, city: str, state: str, age: int):
         """
-    
+        Unpack list of info for Person attributes
+
+        :param first: first name
+        :param last: last name
+        :param street: street address
+        :param city: city address
+        :param state: state abbreviation address
+        :param age: Person's current age
         """
         self.__first_name = first
         self.__last_name = last
@@ -16,113 +23,110 @@ class Person:
         self.__age = age
     
     @property
-    def first_name(self) -> str:
-        return self.__first_name
-    
-    @property
     def last_name(self) -> str:
+        """
+        Getter for age, accessed in Workshop.print_results()
+
+        :return: person's last name
+        :rtype: str
+        """
         return self.__last_name
     
     @property
-    def street(self) -> str:
-        return self.__street
-    
-    @property
-    def city(self) -> str:
-        return self.__city
-
-    @property
-    def state(self) -> str:
-        return self.__state
-    
-    @property
     def address(self) -> str:
+        """
+        Getter for age, accessed in Workshop.add_single_entry()
+
+        :return: person's address
+        :rtype: str
+        """
         return ', '.join([self.__street, self.__city, self.__state])
         
     @property
     def age(self) -> int:
+        """
+        Getter for age, accessed in Workshop.print_results()
+
+        :return: person's age
+        :rtype: int
+        """
         return self.__age
-    
-    def is_household(self, person) -> str:
-        return self.address == person.address
-    
-    def __eq__(self, other) -> bool:
-        pass
     
     def __lt__(self, other) -> bool:
         """
-        :param other:
-        :param type:
-        :return:
+        Less than comparison overload to allow sorting by order of last name then first name
+
+        :param other: another person being compared to
+        :param type: Person
+        :return: whether this object is less than another person by lexicographical order
         :rtype: bool       
         """    
-        if not isinstance(other, Person):
-            raise TypeError("Can only accept Person object")
-        elif self.age > other.age:
-            return True
-        # elif self.last_name > other.last_name:
-        #     return True
-        # elif self.last_name == other.last_name:
-        #     if self.first_name > other.first_name:
-        #         return True
-        #     elif self.age < other.age:
-        #         return True
-        # return False
+        if not isinstance(other, Person): raise TypeError("Can only accept Person object")
+        elif self.__last_name < other.__last_name: return True
+        elif self.__last_name == other.__last_name and self.__first_name < other.__first_name: return True
+        return False
     
     def __gt__(self, other) -> bool:
         """
-        :param other:
-        :param type:
-        :return:
+        Greater than comparison overload to allow sorting by order of last name then first name
+
+        :param other: another person being compared to
+        :param type: Person
+        :return: whether this object is greater than another person by lexicographical order
         :rtype: bool       
-        """       
-        if not isinstance(other, Person):
-            raise TypeError("Can only accept Person object")
-        elif self.age < other.age:
-            return True
-        # elif self.last_name < other.last_name:
-        #     return True
-        # elif self.last_name == other.last_name:
-        #     if self.first_name < other.first_name:
-        #         return True
-        #     elif self.age > other.age:
-        #         return True
-        # return False
+        """    
+        if not isinstance(other, Person): raise TypeError("Can only accept Person object")
+        elif self.__last_name > other.__last_name: return True
+        elif self.__last_name == other.__last_name and self.__first_name > other.__first_name: return True
+        return False
 
     def __str__(self) -> str:
         """
+        For printing out attributes of Person
 
-        :return:
-        :rtype:        
+        :return: attributes in a string
+        :rtype: str       
         """
         return f'{self.__last_name}, {self.__first_name}, {self.__street}, {self.__city}, {self.__state}, Age {self.__age}'
 
     def __repr__(self) -> str:
         """
-        
-        :return:
-        :rtype:
+        Attributes of Person
+
+        :return: attributes in a string
+        :rtype: str  
         """
         return f'{self.__last_name}, {self.__first_name}, {self.__street}, {self.__city}, {self.__state}, Age {self.__age}'
 
+
 class WorkShop:
     """
-
+    Shop for creating Person entries, sort and print
     """
     def __init__(self):
         """
-        
+        Constructor to house the dictionary of households:
+        self.__households = {address: list[Person]} 
         """
         self.__households = {}
 
     @property
-    def households(self):
+    def households(self) -> list:
+        """
+        Access households for testing purposes
+
+        :return: dictionary of households by addresss
+        :rtype: dict {str: list[str, int]}
+        """
         return self.__households
 
-    def add_single_entry(self, data):
+    def add_single_entry(self, data: str) -> None:
         """
-        :param data:
-        :param type:
+        Call parser to process data then create single Person object and 
+        add to self.__households grouped by unique address
+
+        :param data: string of information to create a Person
+        :param type: str
         :return: None.
         """
         new_entry = self.__parser(data)
@@ -132,40 +136,37 @@ class WorkShop:
         else:
             self.__households[person.address] = [person]  
 
-    def add_multiple_entries(self, data):
+    def add_multiple_entries(self, data: str) -> None:
         """
-        :param data:
-        :param type:
+        Separate raw string of multiple people's information
+
+        :param data: multi-line str of multiple people's information
+        :param type: str
         :return: None.
         """
         data_list = data.splitlines()
         for line in data_list:
             self.add_single_entry(line)      
             
-    def __parser(self, data):
+    def __parser(self, data: str) -> list:
         """
         Verifies each part of an entry for correct formating and errors
 
-        :param data:
-        :param type:
-        :return:
-        :rtype:
+        :param data: string of raw information about one person
+        :param type: str
+        :return: list of a person's information formatted appropriately
+        :rtype: list [str, int]
         """
         data = data.strip('"').split('","')
         data_parsed = []
         for index, value in enumerate(data):
-
             # first name, last name, city
-            if index in (0, 1, 3):
-                value = value.capitalize()
-            
+            if index in (0, 1, 3): value = value.capitalize()
             # street
             elif index == 2:
                 value = value.split()
-
                 # street name
                 value[1] = value[1].capitalize()
-
                 # St or Blvd
                 value[2] = value[2].capitalize()
                     # includes apt
@@ -174,80 +175,73 @@ class WorkShop:
                 elif len(value) == 3 and value[2][-1] != '.': 
                     value[2] += '.'
                 value = ' '.join(value)
-
             # state abbreviation
-            elif index == 4:
-                value = value.upper()
+            elif index == 4: value = value.upper()
+            # age
+            elif index == 5: value = int(value)
+
             data_parsed.append(value)
         return data_parsed
 
-    def print_results(self):
+    def print_results(self) -> None:
         """
+        Create structure for printing solution, first header of household and & occupants,
+        then each person over 18 in that household
 
         :return: None.
         """
         for family in self.__households.values():
-
+            # last names for household title
             last_names = {}
             for person in family:
                 if person.last_name not in last_names:
                     last_names[person.last_name] = 0
-
             last_names = ' and '.join(list(last_names))
+            print(f'\n{last_names} household has {len(family)} occupants, person(s) over 18 are:')
 
-            print(f'\n{last_names} household has {len(family)} occupants:')
-
-            if len(family) > 1:
-                family = WorkShop.heap_sort(family)
-            for person in family:
+            # only print persons over 18
+            over_18 = [person for person in family if person.age > 18]
+            if len(over_18) > 1: over_18 = WorkShop.heap_sort(over_18)
+            elif over_18 == []: over_18 = ["None"]
+            for person in over_18:
                 print(person)
 
     @staticmethod
-    def heap_sort(family):
+    def heap_sort(family: list) -> list:
         """
-        Adapted heapsort from https://www.youtube.com/watch?v=Q_eia3jC9Ts
+        Adapted heapsort from https://favtutor.com/blogs/heap-in-python
 
-        :param family:
-        :param type:
-        :return:
-        :rtype: 
+        :param family: list of family members
+        :param type: list [Person]
+        :return: sorted list of family members
+        :rtype: list [Person]
         """
         array = family
         n = len(array)
 
-        def heapify(array, n, i):
+        def heapify(array: list, n: int, i: int) -> None:
             """
             Part of heapsort. Heapify 'bubbles' values down to keep a heap structure with minimum root
+
+            :param array: list of persons
+            :param n: length of list
+            :param i: root index
             """
-            smallest = i  # Initialize smallest as root
-            l = 2 * i + 1     # left = 2*i + 1
-            r = 2 * i + 2     # right = 2*i + 2
+            smallest = i  
+            left_child = 2 * i + 1     
+            right_child = 2 * i + 2     
+            if left_child < n and array[smallest] < array[left_child]: smallest = left_child
+            if right_child < n and array[smallest] < array[right_child]: smallest = right_child
 
-            # See if left child of root exists and is
-            # greater than root
-            if l < n and array[i] < array[l]:
-                smallest = l
-
-            # See if right child of root exists and is
-            # greater than root
-            if r < n and array[smallest] < array[r]:
-                smallest = r
-
-            # Change root, if needed
             if smallest != i:
-                array[i], array[smallest] = array[smallest], array[i]  # swap
-
-                # Heapify the root.
+                array[i], array[smallest] = array[smallest], array[i] 
                 heapify(array, n, smallest)
-        
-        # Build a max heap.
-        # Start at last parent location ((n//2)-1) and go to root.
+
         for i in range(n // 2 - 1, -1, -1):
             heapify(array, n, i)
 
-        # Sort by removing last element, decreasing size n
         for i in range(n-1, 0, -1):
-            array[i], array[0] = array[0], array[i]   # swap
+            array[i], array[0] = array[0], array[i]  
             heapify(array, i, 0)
         return array
 
@@ -264,21 +258,7 @@ if __name__ == "__main__":
 "Jane","Smith","123 Main St.","Seattle","WA","13"'''
 
     w = WorkShop()
-    
-    # w.add_single_entry('"Dave","Smith","123 main st.","seattle","wa","43"')
     w.add_multiple_entries(input_data)
-    # for address, family in w.households.items():
-    #     print('address:', address)
-    # for address, family in w.households.items():
-    #     print('family: ')
-    #     for person in family:
-    #         print('person:', person)
-
     w.print_results()
-
-
-
-
-
 
 # END
